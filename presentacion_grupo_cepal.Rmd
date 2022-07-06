@@ -871,25 +871,6 @@ evaluate_size(est, scheme = "cepal", unweighted = 70, ess = 180) %>%
 
 
 
----
-
-background-image: url("imagenes/fondo2.PNG")
-background-size: contain;
-background-position: 100% 0%
-
-# Visualización estándar
-
-La función `tabla_html` aún está en desarrollo, pero ya está disponible para ser usada
-
-Recibe como argumento el output de `evaluate` 
-
-
-```{r}
-
-tabla_html(evaluate_tot(est) %>% slice(1:5)) 
-
-
-```
 
 ---
 
@@ -994,7 +975,7 @@ Traduciremos todo al inglés
 
 --
 
-Pasaremos a CRAN
+Migraremos el paquete a CRAN
 
 
 
