@@ -4,10 +4,11 @@
     <title>Capacitación paquete calidad</title>
     <meta charset="utf-8" />
     <meta name="author" content="" />
-    <meta name="date" content="2021-04-20" />
-    <script src="calidad_files/kePrint-0.0.1/kePrint.js"></script>
-    <link href="calidad_files/lightable-0.0.1/lightable.css" rel="stylesheet" />
+    <meta name="date" content="2022-07-06" />
+    <script src="presentacion_grupo_cepal_files/kePrint-0.0.1/kePrint.js"></script>
+    <link href="presentacion_grupo_cepal_files/lightable-0.0.1/lightable.css" rel="stylesheet" />
     <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="https:\\cdnjs.cloudflare.com\ajax\libs\animate.css\3.7.0\animate.min.css" type="text/css" />
   </head>
   <body>
     <textarea id="source">
@@ -24,7 +25,7 @@ class: center, middle
 
 ## Proyecto Estratégico Servicios Compartidos para la Producción Estadística
 
-### Abril 2021
+### Julio 2022
 
 
 
@@ -39,15 +40,15 @@ background-position: 100% 0%
 # Estructura del taller
 
 
-- Breve repaso del estándar de calidad para las estimaciones en encuestas de hogares del INE
+- Mirada general de estándares INE Chile y CEPAL
 
 --
 
-- Mirada general del paquete `survey`
+- Estimaciones con el paquete `calidad`
 
 --
 
-- Presentación y ejercicios prácticos con el paquete `calidad`, desarrollado por el PE SSCC. 
+- Evaluación de estimaciones con el paquete calidad 
 
 
 
@@ -55,7 +56,7 @@ background-position: 100% 0%
 
 **Objetivo del taller**
 
-- Aplicar el estándar de calidad, utilizando el paquete desarrollado por el PE Servicios Compartidos, de forma tal que todas las Direcciones Regionales utilicen y apliquen un mismo método para la aplicación del Estándar de Calidad.
+- Capacitar a los asistentes en el uso del paquete calidad para la aplicación de estándares en encuestas de hogares
 
 --
 
@@ -63,13 +64,21 @@ background-position: 100% 0%
 
 ---
 
+
+class: inverse, center, middle
+
+# I. Mirada general a los estándares
+
+
+---
+
 background-image: url("imagenes/fondo2.PNG")
 background-size: contain;
 background-position: 100% 0%
 
-# Estándar de calidad INE
+# Estándar de calidad INE Chile
 
-Desde 2020, el INE cuenta con un [estándar](https://www.ine.cl/docs/default-source/documentos-de-trabajo/20200318-lineamientos-medidas-de-precisi%C3%B3n.pdf?sfvrsn=f1ab2dbe_4) para evaluar la calidad de estimaciones provenientes de encuestas de hogares
+Desde 2020, INE Chile cuenta con un [estándar](https://www.ine.cl/docs/default-source/documentos-de-trabajo/20200318-lineamientos-medidas-de-precisi%C3%B3n.pdf?sfvrsn=f1ab2dbe_4) para evaluar la calidad de estimaciones provenientes de encuestas de hogares
 
 
 .center[
@@ -90,7 +99,7 @@ background-image: url("imagenes/fondo2.PNG")
 background-size: contain;
 background-position: 100% 0%
 
-# Aspectos generales del estándar
+# Estándar de calidad INE Chile
 
 Existe un flujo, que nos permite etiquetar **automáticamente** cada estimación 
 
@@ -106,7 +115,7 @@ background-image: url("imagenes/fondo2.PNG")
 background-size: contain;
 background-position: 100% 0%
 
-# Aspectos generales del estándar
+# Estándar de calidad INE Chile
 
 ## El flujo establece caminos diferenciados
 
@@ -128,6 +137,50 @@ background-position: 100% 0%
  
 
 ### En un caso usamos el SE y en otro el CV
+
+---
+background-image: url("imagenes/fondo2.PNG")
+background-size: contain;
+background-position: 100% 0%
+
+# Aspectos generales del estándar CEPAL
+
+.center[
+&lt;img src="imagenes/estandar_cepal.png" width="400" /&gt;
+]
+
+
+---
+
+
+background-image: url("imagenes/fondo2.PNG")
+background-size: contain;
+background-position: 100% 0%
+
+# Estándar de calidad CEPAL
+
+
+.center[
+&lt;img src="imagenes/flujo_cepal.png" width="430" /&gt;
+]
+
+
+---
+
+background-image: url("imagenes/fondo2.PNG")
+background-size: contain;
+background-position: 100% 0%
+
+# Estándar de calidad CEPAL
+
+* **El estándar CEPAL considera:**
+  + .small[coeficiente de variación]
+  + .red[.small[coeficiente de variación logarítmico]] 
+  + .small[tamaño de muestra]
+  + .red[.small[tamaño de muestra efectivo]] 
+  + .red[.small[conteo de casos no ponderado]]
+  + .small[grados de libertad] 
+
 
 ---
 
@@ -245,9 +298,9 @@ dc &lt;- svydesign(weights = ~fact_cal, ids = ~conglomerado, strata = ~estrato,
 ```
 
 Debemos declarar:
-- conglomerados de varianza
-- estratos de varianza
-- factor de expansión
+- UPM 
+- Estratos
+- Pesos de muestreo (factor de expansión)
 
 --
 
@@ -305,38 +358,6 @@ svyby(formula = ~desocupado, design = dc, by = ~fdt, FUN = svymean)
 ```r
 svyratio(numerator = ~desocupado, denominator = ~fdt, subset(dc, fdt == 1))
 ```
----
-background-image: url("imagenes/fondo2.PNG")
-background-size: contain;
-background-position: 100% 0%
-
-# Brevísima revisión de survey
-
-Si queremos utilizar métodos de remuestreo, podemos usar `as.svrepdesign`
-
-Con `as.svrepdesign` podemos convertir un diseño "normal" en uno con remuestreo  
-
---
-
-
-```r
-dc_rep &lt;- as.svrepdesign(design = dc, type = "subbootstrap", replicates = 10)
-```
-
---
-
-Y calcular, por ejemplo, el error estándar mediante remuestreo
-
-
-```r
-svymean(x = ~desocupado, subset(dc_rep, fdt == 1))
-```
-
-```
-##               mean     SE
-## desocupado 0.10227 0.0028
-```
-
 
 
 ---
@@ -388,7 +409,7 @@ Se requiere el paquete `devtools`
 
 ```r
 library(devtools)
-install_github("Klauslehmann/calidad")
+install_github("inesscc/calidad")
 ```
 
 --
@@ -425,22 +446,32 @@ El paquete `calidad` tiene 2 grandes familias de funciones:
 
 Podemos hacer los siguientes cálculos
 
-- `create_mean`: calcular la media (ingreso)
-- `create_prop`: proporción o razón (ocupación) 
-- `create_tot`: conteo de unidades (ocupación)
-- `create_tot_con`: suma de variables continuas (ingreso)
-- `create_median`: mediana (ingreso)
+- `create_mean`: calcular la media 
+- `create_prop`: proporción o razón 
+- `create_tot` / `create_size`: conteo de unidades 
+- `create_tot_con` / `create_total` : suma de variables continuas 
+- `create_median`: mediana 
+
+
 
 --
 
 ### Estas funciones devuelven la estimación y los insumos para el estándar
+
+
+---
+
+class: inverse, center, middle
+
+# II. Creación de los insumos
+
 
 ---
 background-image: url("imagenes/fondo2.PNG")
 background-size: contain;
 background-position: 100% 0%
 
-# Panorama general
+# Creando los insumos: create_mean
 
 Queremos calcular la edad media para mujeres y hombres
 
@@ -475,7 +506,7 @@ background-image: url("imagenes/fondo2.PNG")
 background-size: contain;
 background-position: 100% 0%
 
-# Panorama general
+# Creando los insumos: create_mean
 
 A diferencia de `survey`, en el paquete `calidad` no es necesario utilizar ~  
 
@@ -505,14 +536,6 @@ create_mean(var = "edad", dominios = sexo,  disenio = dc)
 ## 1    1 35.69097 0.1688094 4634 36551 0.004729752
 ## 2    2 37.65420 0.1815331 4670 41089 0.004821060
 ```
-
---
-
-Ya veremos por qué podría ser útil que los argumentos sean strings
-
-.center[
-&lt;img src="https://media.giphy.com/media/xUPGcz2H1TXdCz4suY/giphy.gif" width="150" /&gt;
-]
 
 
 ---
@@ -575,7 +598,7 @@ create_prop(var = desocupado, dominios = sexo+metro, subpop = fdt, disenio = dc)
 ```
 
 ```
-##   sexo metro   objetivo          se         cv   gl     n
+##   sexo metro   objetivo          se   coef_var   gl     n
 ## 1    1     0 0.08756937 0.003235291 0.03694547 3457 15058
 ## 2    2     0 0.09993568 0.004001230 0.04003805 3282 11171
 ## 3    1     1 0.10855279 0.007127346 0.06565788  846  3224
@@ -629,8 +652,8 @@ create_prop(var = ocupado_hombre, denominador = ocupado_mujer,
 ```
 
 ```
-##                objetivo         se         cv   gl     n
-## ocupado_hombre 1.457028 0.02161891 0.01483768 4567 32209
+##                objetivo         se   coef_var   gl     n
+## ocupado_hombre 1.457028 0.02161891 0.01483768 4529 29260
 ```
 --
 
@@ -644,9 +667,9 @@ create_prop(var = ocupado_hombre, denominador = ocupado_mujer,
 ```
 
 ```
-##   metro objetivo         se         cv   gl     n
-## 1     0 1.515355 0.02213437 0.01460672 3660 26229
-## 2     1 1.389366 0.03825463 0.02753388  907  5980
+##   metro objetivo         se   coef_var   gl     n
+## 1     0 1.515355 0.02213437 0.01460672 3633 23959
+## 2     1 1.389366 0.03825463 0.02753388  896  5301
 ```
 
 ---
@@ -677,50 +700,9 @@ create_prop(var = casado, denominador = conviviente,  disenio = dc )
 ```
 
 ```
-##        objetivo         se         cv   gl     n
-## casado 1.923733 0.05178126 0.02691707 4719 77640
+##        objetivo         se   coef_var   gl     n
+## casado 1.923733 0.05178126 0.02691707 4302 30760
 ```
-
-
----
-background-image: url("imagenes/fondo2.PNG")
-background-size: contain;
-background-position: 100% 0%
-
-# Creando los insumos: median-mean
-
-Para calcular la media de edad por sexo, usamos la función `create_mean`
-
-
-```r
-create_mean(var = edad, dominios = sexo, disenio = dc)
-```
-
-```
-##   sexo     mean        se   gl     n    coef_var
-## 1    1 35.69097 0.1688094 4634 36551 0.004729752
-## 2    2 37.65420 0.1815331 4670 41089 0.004821060
-```
---
-
-Para calcular la mediana, usamos `create_median`
-
-En este caso, el valor por defecto para el número de réplicas es 10, pero podemos elegir el valor que queramos
-
-
-```r
-create_median(var = edad, dominios = sexo, disenio = dc, replicas = 50)
-```
-
-```
-##   sexo median        se   gl     n    coef_var
-## 1    1     34 0.2398979 4634 36551 0.007055822
-## 2    2     36 0.2398979 4670 41089 0.006663832
-```
-
---
-
-.red[¡¡El tiempo de ejecución aumenta significativamente con el número de réplicas!!]
 
 
 ---
@@ -759,45 +741,12 @@ create_tot(var = est_conyugal, dominios = sexo, subpop = fdt, disenio = dc)
 ```
 
 ```
-## Error in create_tot(var = est_conyugal, dominios = sexo, subpop = fdt, : ¡Debes usar una variable dummy cuando desagregas!
+## Error in create_tot(var = est_conyugal, dominios = sexo, subpop = fdt, : Debes usar una variable dummy cuando desagregas!
 ```
 
 
 
----
 
-background-image: url("imagenes/fondo2.PNG")
-background-size: contain;
-background-position: 100% 0%
-
-# Argumentos adicionales
-
-Hasta el momento hemos revisado 
-
-- `create_prop`
-- `create_mean`
-- `create_median`
-- `create_tot`
-
---
-
-Todas las funciones del paquete operan de manera similar
-
-
---
-
-Contamos con dos argumentos opcionales 
-
-- `ci`: para obtener intervalos de confianza 
-- `ajuste_ene`: para calcular el intervalo de confianza con `\(t = 2\)`
-
---
-
-La ENE está en un periodo de cambio de marco muestral (marcos duales)
-
---
-
-Durante la transición se está utilizando un valor crítico fijo, por ende, no se está considerando la cantidad de grados de libertad 
 
 
 ---
@@ -807,7 +756,7 @@ background-position: 100% 0%
 
 # Argumentos adicionales
 
-Queremos calcular el intervalo de confianza para la media de edad
+Si queremos calcular el **intervalo de confianza** para la media de edad
 
 
 ```r
@@ -822,37 +771,37 @@ create_mean(var = edad, dominios = sexo, disenio = dc, ci = T)
 
 --
 
-Debido al cambio de marco, la ENE está usando *t = 2* para el cálculo del intervalo de confianza 
+Si queremos retornar el **efecto diseño** podemos usar el parámetro deff 
 
 
 ```r
-create_mean(var = edad, dominios = sexo, disenio = dc, ci = T, ajuste_ene = T)
+create_mean(var = edad, dominios = sexo, disenio = dc, ci = T, deff = T)
 ```
 
 ```
-##   sexo     mean        se   gl     n    coef_var t       li       ls
-## 1    1 35.69097 0.1688094 4634 36551 0.004729752 2 35.35335 36.02859
-## 2    2 37.65420 0.1815331 4670 41089 0.004821060 2 37.29113 38.01726
+##   sexo     mean        se   gl     n    coef_var        t       li       ls
+## 1    1 35.69097 0.1688094 4634 36551 0.004729752 1.960476 35.36002 36.02191
+## 2    2 37.65420 0.1815331 4670 41089 0.004821060 1.960472 37.29831 38.01009
+##       deff
+## 1 2.323799
+## 2 2.725294
 ```
+
 --
 
-.red[Este ajuste opera desde enero de 2020]
+De manera similar podemos obtener:
+
+- Tamaño de muestra efectivo
+- Error relativo
+- Conteo no ponderado
 
 
 ---
-background-image: url("imagenes/fondo2.PNG")
-background-size: contain;
-background-position: 100% 0%
 
-&lt;br&gt;
-&lt;br&gt;
-&lt;br&gt;
-&lt;br&gt;
-&lt;br&gt;
+class: inverse, center, middle
 
-.center[
-  .big[Evaluación del estándar] 
-]
+
+# III. Evaluación del estándar
 
 
 ---
@@ -865,16 +814,14 @@ background-position: 100% 0%
 Existe una función de evaluación para cada tipo de estimación
 
 - `evaluate_mean`
-- `evaluate_prop`
-- `evaluate_tot`
-- `evaluate_tot_con`
+- `evaluate_prop` 
+- `evaluate_tot` / `evaluate_size`
+- `evaluate_tot_con` / `evaluate_total`
 - `evaluate_median`
 
 --
 
 Estas funciones reciben como argumento la tabla creada por las funciones `create_*`
-
-
 
 ---
 background-image: url("imagenes/fondo2.PNG")
@@ -883,7 +830,7 @@ background-position: 100% 0%
 
 # Evaluación del estándar
 
-Evaluemos de la media de edad por sexo, cumple con el estándar
+Evaluemos si la media de edad por sexo cumple con el estándar INE
 
 --
 
@@ -897,9 +844,9 @@ evaluate_mean(est)
 ##   sexo     mean        se   gl     n    coef_var       eval_n       eval_gl
 ## 1    1 35.69097 0.1688094 4634 36551 0.004729752 n suficiente gl suficiente
 ## 2    2 37.65420 0.1815331 4670 41089 0.004821060 n suficiente gl suficiente
-##    eval_cv calidad
-## 1 cv &lt;= 15  fiable
-## 2 cv &lt;= 15  fiable
+##      eval_cv calidad
+## 1 cv &lt;= 0.15  fiable
+## 2 cv &lt;= 0.15  fiable
 ```
 
 --
@@ -928,7 +875,7 @@ evaluate_prop(est)
 ```
 
 ```
-##   sexo   objetivo          se         cv   gl     n       eval_n       eval_gl
+##   sexo   objetivo          se   coef_var   gl     n       eval_n       eval_gl
 ## 1    1 0.05358447 0.002070560 0.03864105 4634 36551 n suficiente gl suficiente
 ## 2    2 0.04118663 0.001644401 0.03992560 4670 41089 n suficiente gl suficiente
 ##   prop_est tipo_eval cuadratica     eval_se eval_cv calidad
@@ -945,7 +892,9 @@ Además de las columnas ya vistas, tenemos
 - `eval_se`
 - `eval_cv`
 
+
 ---
+
 
 background-image: url("imagenes/fondo2.PNG")
 background-size: contain;
@@ -953,68 +902,73 @@ background-position: 100% 0%
 
 # Evaluación del estándar
 
-Veamos qué pasa con las proporciones que son mayores a 1  
+¿Qué pasa si queremos considerar los criterios de CEPAL?
 
-
-```r
-est &lt;- create_prop(var = casado, 
-                   denominador = conviviente,
-                   dominios = metro, 
-                   disenio = dc )
-evaluate_prop(est)
-```
-
-```
-##   metro objetivo         se         cv   gl     n       eval_n       eval_gl
-## 1     0 2.132569 0.05416014 0.02539666 3779 64760 n suficiente gl suficiente
-## 2     1 1.674211 0.08740591 0.05220721  940 12880 n suficiente gl suficiente
-##   prop_est tipo_eval cuadratica eval_se  eval_cv calidad
-## 1   &gt;= a 1   Eval CV         NA    &lt;NA&gt; cv &lt;= 15  fiable
-## 2   &gt;= a 1   Eval CV         NA    &lt;NA&gt; cv &lt;= 15  fiable
-```
+.center[
+&lt;img src="https://media.giphy.com/media/xUPGcz2H1TXdCz4suY/giphy.gif" width="150" /&gt;
+]
 
 --
 
-**En este caso, usamos el CV para hacer la evaluación y no el SE** 
-
-
----
-background-image: url("imagenes/fondo2.PNG")
-background-size: contain;
-background-position: 100% 0%
-
-# Evaluación del estándar
-
-El estándar señala que un tabulado puede ser publicado si el 50% de sus celdas es fiable
-
---
-
-Para saber si el tabulado debe ser publicado, usamos el argumento `publicar`
-
 
 ```r
-est &lt;-  create_tot(var = desocupado, dominios = region+sexo, disenio = dc)
-evaluate_tot(est, publicar = T) %&gt;% 
-  select(region, sexo, total, calidad, publicacion, aprueba) %&gt;% 
+est &lt;- create_size(var = desocupado, dominios = region+sexo, disenio = dc, 
+                   unweighted = T, deff = T, ess = T)
+
+evaluate_size(est, scheme = "cepal") %&gt;% 
+  select(region, sexo, total, n, gl, coef_var, unweighted, ess, tag) %&gt;% 
   slice(1:6)
 ```
 
 ```
-##   region sexo    total   calidad       publicacion        aprueba
-## 1      1    1  9248.56 no fiable publicar tabulado pasa el 59.38%
-## 2      2    1 21320.02    fiable publicar tabulado pasa el 59.38%
-## 3      3    1 10659.94    fiable publicar tabulado pasa el 59.38%
-## 4      4    1 22749.72    fiable publicar tabulado pasa el 59.38%
-## 5      5    1 52432.50    fiable publicar tabulado pasa el 59.38%
-## 6      6    1 28877.61    fiable publicar tabulado pasa el 59.38%
+##   region sexo    total    n  gl   coef_var unweighted       ess     tag
+## 1      1    1  9248.56 1129 113 0.19398036         46  531.2480 supress
+## 2      2    1 21320.02 1342 148 0.13959832         79  790.7939 publish
+## 3      3    1 10659.94 1340 169 0.14012331         80  705.0535 publish
+## 4      4    1 22749.72 1852 240 0.17480808         80  558.0660 publish
+## 5      5    1 52432.50 4639 588 0.09123426        239 2076.7353 publish
+## 6      6    1 28877.61 2470 259 0.11694997        123 1182.1014 publish
 ```
+
+---
+
+background-image: url("imagenes/fondo2.PNG")
+background-size: contain;
+background-position: 100% 0%
+
+# Evaluación del estándar
+
+¿Y si necesito manejar los parámetros del estándar?
+
+.center[
+&lt;img src="https://media.giphy.com/media/xUPGcz2H1TXdCz4suY/giphy.gif" width="150" /&gt;
+]
+
 
 --
 
-Tenemos 2 nuevas columnas
 
-- `publicacion`: evaluación general del tabulado
-- `aprueba`: porcentaje de celdas con categoría fiable
+```r
+est &lt;- create_size(var = desocupado, dominios = region+sexo, disenio = dc,
+                   unweighted = T, deff = T, ess = T)
+
+evaluate_size(est, scheme = "cepal", unweighted = 70, ess = 180) %&gt;% 
+  select(region, sexo, total, n, gl, coef_var, unweighted, ess, tag) %&gt;% 
+  slice(1:6)
+```
+
+```
+##   region sexo    total    n  gl   coef_var unweighted       ess     tag
+## 1      1    1  9248.56 1129 113 0.19398036         46  531.2480 supress
+## 2      2    1 21320.02 1342 148 0.13959832         79  790.7939 publish
+## 3      3    1 10659.94 1340 169 0.14012331         80  705.0535 publish
+## 4      4    1 22749.72 1852 240 0.17480808         80  558.0660 publish
+## 5      5    1 52432.50 4639 588 0.09123426        239 2076.7353 publish
+## 6      6    1 28877.61 2470 259 0.11694997        123 1182.1014 publish
+```
+
+
+
 
 ---
 
@@ -1044,6 +998,10 @@ tabla_html(evaluate_tot(est) %&gt;% slice(1:5))
    &lt;th style="text-align:center;font-weight: bold;color: black !important;"&gt; n &lt;/th&gt;
    &lt;th style="text-align:center;font-weight: bold;color: black !important;"&gt; gl &lt;/th&gt;
    &lt;th style="text-align:center;font-weight: bold;color: black !important;"&gt; coef_var &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;color: black !important;"&gt; desocupado &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;color: black !important;"&gt; unweighted &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;color: black !important;"&gt; deff &lt;/th&gt;
+   &lt;th style="text-align:center;font-weight: bold;color: black !important;"&gt; ess &lt;/th&gt;
    &lt;th style="text-align:center;font-weight: bold;color: black !important;"&gt; eval_n &lt;/th&gt;
    &lt;th style="text-align:center;font-weight: bold;color: black !important;"&gt; eval_gl &lt;/th&gt;
    &lt;th style="text-align:center;font-weight: bold;color: black !important;"&gt; eval_cv &lt;/th&gt;
@@ -1056,25 +1014,33 @@ tabla_html(evaluate_tot(est) %&gt;% slice(1:5))
    &lt;td style="text-align:center;"&gt; 1 &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; 9.248,56 &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; 1.794,04 &lt;/td&gt;
-   &lt;td style="text-align:center;"&gt; &lt;span style="     color: red !important;"&gt;46&lt;/span&gt; &lt;/td&gt;
-   &lt;td style="text-align:center;"&gt; &lt;span style="     color: black !important;"&gt;31&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; &lt;span style="     color: black !important;"&gt;1129&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; &lt;span style="     color: black !important;"&gt;113&lt;/span&gt; &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; 0,19 &lt;/td&gt;
-   &lt;td style="text-align:center;"&gt; n insuficiente &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 46 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2,13 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 531,25 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; n suficiente &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; gl suficiente &lt;/td&gt;
-   &lt;td style="text-align:center;"&gt; cv &amp;lt;= 15 &lt;/td&gt;
-   &lt;td style="text-align:center;"&gt; &lt;span style="     color: black !important;border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: red !important;"&gt;no fiable&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; cv entre 0.15 y 0.3 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; &lt;span style="     color: black !important;border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: yellow !important;"&gt;poco fiable&lt;/span&gt; &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:center;"&gt; 2 &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; 1 &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; 21.320,02 &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; 2.976,24 &lt;/td&gt;
-   &lt;td style="text-align:center;"&gt; &lt;span style="     color: black !important;"&gt;79&lt;/span&gt; &lt;/td&gt;
-   &lt;td style="text-align:center;"&gt; &lt;span style="     color: black !important;"&gt;47&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; &lt;span style="     color: black !important;"&gt;1342&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; &lt;span style="     color: black !important;"&gt;148&lt;/span&gt; &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; 0,14 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 79 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1,70 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 790,79 &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; n suficiente &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; gl suficiente &lt;/td&gt;
-   &lt;td style="text-align:center;"&gt; cv &amp;lt;= 15 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; cv &amp;lt;= 0.15 &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; &lt;span style="     color: black !important;border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: green !important;"&gt;fiable&lt;/span&gt; &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
@@ -1082,12 +1048,16 @@ tabla_html(evaluate_tot(est) %&gt;% slice(1:5))
    &lt;td style="text-align:center;"&gt; 1 &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; 10.659,94 &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; 1.493,71 &lt;/td&gt;
-   &lt;td style="text-align:center;"&gt; &lt;span style="     color: black !important;"&gt;80&lt;/span&gt; &lt;/td&gt;
-   &lt;td style="text-align:center;"&gt; &lt;span style="     color: black !important;"&gt;47&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; &lt;span style="     color: black !important;"&gt;1340&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; &lt;span style="     color: black !important;"&gt;169&lt;/span&gt; &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; 0,14 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 80 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1,90 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 705,05 &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; n suficiente &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; gl suficiente &lt;/td&gt;
-   &lt;td style="text-align:center;"&gt; cv &amp;lt;= 15 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; cv &amp;lt;= 0.15 &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; &lt;span style="     color: black !important;border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: green !important;"&gt;fiable&lt;/span&gt; &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
@@ -1095,29 +1065,76 @@ tabla_html(evaluate_tot(est) %&gt;% slice(1:5))
    &lt;td style="text-align:center;"&gt; 1 &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; 22.749,72 &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; 3.976,83 &lt;/td&gt;
-   &lt;td style="text-align:center;"&gt; &lt;span style="     color: black !important;"&gt;80&lt;/span&gt; &lt;/td&gt;
-   &lt;td style="text-align:center;"&gt; &lt;span style="     color: black !important;"&gt;42&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; &lt;span style="     color: black !important;"&gt;1852&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; &lt;span style="     color: black !important;"&gt;240&lt;/span&gt; &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; 0,17 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 80 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 3,32 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 558,07 &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; n suficiente &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; gl suficiente &lt;/td&gt;
-   &lt;td style="text-align:center;"&gt; cv &amp;lt;= 15 &lt;/td&gt;
-   &lt;td style="text-align:center;"&gt; &lt;span style="     color: black !important;border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: green !important;"&gt;fiable&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; cv entre 0.15 y 0.3 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; &lt;span style="     color: black !important;border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: yellow !important;"&gt;poco fiable&lt;/span&gt; &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:center;"&gt; 5 &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; 1 &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; 52.432,50 &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; 4.783,64 &lt;/td&gt;
-   &lt;td style="text-align:center;"&gt; &lt;span style="     color: black !important;"&gt;239&lt;/span&gt; &lt;/td&gt;
-   &lt;td style="text-align:center;"&gt; &lt;span style="     color: black !important;"&gt;138&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; &lt;span style="     color: black !important;"&gt;4639&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; &lt;span style="     color: black !important;"&gt;588&lt;/span&gt; &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; 0,09 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 239 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2,23 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 2.076,74 &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; n suficiente &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; gl suficiente &lt;/td&gt;
-   &lt;td style="text-align:center;"&gt; cv &amp;lt;= 15 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; cv &amp;lt;= 0.15 &lt;/td&gt;
    &lt;td style="text-align:center;"&gt; &lt;span style="     color: black !important;border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: green !important;"&gt;fiable&lt;/span&gt; &lt;/td&gt;
   &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
+
+---
+
+background-image: url("imagenes/fondo2.PNG")
+background-size: contain;
+background-position: 100% 0%
+
+# Estándar CEPAL
+
+¿Y si necesito manejar los parámetros del estándar?
+
+.center[
+&lt;img src="https://media.giphy.com/media/xUPGcz2H1TXdCz4suY/giphy.gif" width="150" /&gt;
+]
+
+
+--
+
+
+```r
+est &lt;- create_size(var = desocupado, dominios = region+sexo, disenio = dc,
+                   unweighted = T, deff = T, ess = T)
+
+evaluate_size(est, scheme = "cepal", unweighted = 70, ess = 180) %&gt;% 
+  select(region, sexo, total, n, gl, coef_var, unweighted, ess, tag) %&gt;% 
+  slice(1:6)
+```
+
+```
+##   region sexo    total    n  gl   coef_var unweighted       ess     tag
+## 1      1    1  9248.56 1129 113 0.19398036         46  531.2480 supress
+## 2      2    1 21320.02 1342 148 0.13959832         79  790.7939 publish
+## 3      3    1 10659.94 1340 169 0.14012331         80  705.0535 publish
+## 4      4    1 22749.72 1852 240 0.17480808         80  558.0660 publish
+## 5      5    1 52432.50 4639 588 0.09123426        239 2076.7353 publish
+## 6      6    1 28877.61 2470 259 0.11694997        123 1182.1014 publish
+```
+
+
 
 
 ---
@@ -1158,6 +1175,40 @@ insumos &lt;- map_df(c("edad", "curso"), ~create_mean(var = .x, dominios = "sexo
                                                    disenio = dc, standard_eval = T ))
 ```
 
+---
+
+background-image: url("imagenes/fondo2.PNG")
+background-size: contain;
+background-position: 100% 0%
+
+# Próximos pasos
+
+Estamos reestructurando el paquete para simplificar su uso
+
+--
+
+Homologaremos las 4 funciones básicas entre INE y CEPAL  
+
+- create_size
+- create_prop
+- create_total
+- create_mean
+
+--
+
+Crearemos una única función de evaluación 
+
+- evaluate
+
+--
+
+Traduciremos todo al inglés
+
+--
+
+Pasaremos a CRAN
+
+
 
 ---
 
@@ -1175,11 +1226,11 @@ Estos proyectos se nutren del aporte de la comunidad
 
 --
 
-En este [repositorio de github](https://github.com/Klauslehmann/calidad) pueden proponer nuevos desarrollos
+En este [repositorio de github](https://github.com/inesscc/calidad) pueden proponer nuevos desarrollos
 
 --
 
-Ricardo Pizarro y yo seremos los mantenedores 
+Ricardo Pizarro y yo somos los mantenedores 
 
 --
 
@@ -1263,14 +1314,15 @@ class: center, middle
 
 ## Proyecto Estratégico Servicios Compartidos para la Producción Estadística
 
-### Abril 2021
+### Julio 2022
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
 "highlightStyle": "github",
 "highlightLines": true,
-"countIncrementalSlides": false
+"countIncrementalSlides": false,
+"ratio": "13:9"
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));
