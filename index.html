@@ -4,7 +4,7 @@
     <title>Capacitación paquete calidad</title>
     <meta charset="utf-8" />
     <meta name="author" content="" />
-    <meta name="date" content="2022-07-06" />
+    <meta name="date" content="2022-07-07" />
     <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
     <link rel="stylesheet" href="https:\\cdnjs.cloudflare.com\ajax\libs\animate.css\3.7.0\animate.min.css" type="text/css" />
   </head>
@@ -19,7 +19,9 @@ class: center, middle
 
 &lt;img src="imagenes/logo_portada2.png" width="200" /&gt;
 
-## Capacitación en uso paquete calidad
+## Taller sobre el uso del paquete calidad
+
+## Instituto Nacional de Estadísticas de Chile
 
 ## Proyecto Estratégico Servicios Compartidos para la Producción Estadística
 
@@ -46,7 +48,7 @@ background-position: 100% 0%
 
 --
 
-- Evaluación de estimaciones con el paquete calidad 
+- Evaluación de estimaciones con el paquete `calidad` 
 
 
 
@@ -54,11 +56,12 @@ background-position: 100% 0%
 
 **Objetivo del taller**
 
-- Capacitar a los asistentes en el uso del paquete calidad para la aplicación de estándares en encuestas de hogares
+- Capacitar a los asistentes en el uso del paquete calidad para la evaluación de estándares de calidad en encuestas de hogares
 
 --
 
 ### Asumiremos un conocimiento básico de R
+
 
 ---
 
@@ -179,6 +182,10 @@ background-position: 100% 0%
   + .red[.small[conteo de casos no ponderado]]
   + .small[grados de libertad] 
 
+--
+
+Nos permite clasificar cada estimación con las etiquetas **publicar, suprimir o revisión**  
+
 
 ---
 
@@ -188,7 +195,7 @@ background-position: 100% 0%
 
 # Introducción paquete calidad
 
-### ¿Cómo pasar del documento a la práctica?
+### ¿Cómo pasar de los documentos a la práctica?
 
 .center[
 &lt;img src="https://media.giphy.com/media/a5viI92PAF89q/giphy.gif" width="200" /&gt;
@@ -200,7 +207,7 @@ Existen múltiples herramientas (Stata, R, SAS, Python) y todas son válidas
 
 --
 
-Múltiples modalidades dentro de cada herramienta (libertad total, scripts estandarizados, funciones, etc)
+Múltiples modalidades dentro de cada herramienta (libertad total, scripts estandarizados, funciones, etc.)
 
 --
 
@@ -220,19 +227,19 @@ Una posibilidad es el uso de un **paquete (librería)**
 
 --
 
-El paquete `calidad` implementa el estándar mediante `R`
+El paquete `calidad` implementa estándares de calidad estadística mediante `R`
 
 --
 
 ### Objetivos del paquete
 
-- Facilitar la aplicación del estándar a usuarios externos
+- Facilitar la aplicación de estándares a usuarios externos
 - Aumentar la eficiencia en el trabajo de los analistas
-- Reducir la probabilidad de error en la implementación
+- Reducir la probabilidad de error en la implementación de estándares 
 
 --
 
-El paquete `calidad` combina el estándar del INE con el paquete `survey`, desarrollado por Thomas Lumley
+El paquete `calidad` en un inicio combinaba el estándar del INE con el paquete `survey`, desarrollado por Thomas Lumley
 
 
 .center[
@@ -910,22 +917,22 @@ background-position: 100% 0%
 
 
 ```r
-est &lt;- create_size(var = desocupado, dominios = region+sexo, disenio = dc, 
+est &lt;- create_mean(var = edad, dominios = region+sexo, disenio = dc, 
                    unweighted = T, deff = T, ess = T)
 
-evaluate_size(est, scheme = "cepal") %&gt;% 
-  select(region, sexo, total, n, gl, coef_var, unweighted, ess, tag) %&gt;% 
+evaluate_mean(est, scheme = "cepal") %&gt;% 
+  select(region, sexo, mean, n, gl, coef_var, unweighted, ess, tag) %&gt;% 
   slice(1:6)
 ```
 
 ```
-##   region sexo    total    n  gl   coef_var unweighted       ess     tag
-## 1      1    1  9248.56 1129 113 0.19398036         46  531.2480 supress
-## 2      2    1 21320.02 1342 148 0.13959832         79  790.7939 publish
-## 3      3    1 10659.94 1340 169 0.14012331         80  705.0535 publish
-## 4      4    1 22749.72 1852 240 0.17480808         80  558.0660 publish
-## 5      5    1 52432.50 4639 588 0.09123426        239 2076.7353 publish
-## 6      6    1 28877.61 2470 259 0.11694997        123 1182.1014 publish
+##   region sexo     mean    n  gl   coef_var unweighted       ess     tag
+## 1      1    1 32.38755 1129 113 0.02318804       1129  696.7784 publish
+## 2      2    1 33.52494 1342 148 0.02055448       1342  828.5747 publish
+## 3      3    1 34.44984 1340 169 0.02005867       1340  965.7103 publish
+## 4      4    1 35.95312 1852 240 0.01959991       1852  982.9191 publish
+## 5      5    1 36.94368 4639 588 0.01208122       4639 2478.8541 publish
+## 6      6    1 36.71949 2470 259 0.01904157       2470  950.9261 publish
 ```
 
 ---
@@ -947,66 +954,23 @@ background-position: 100% 0%
 
 
 ```r
-est &lt;- create_size(var = desocupado, dominios = region+sexo, disenio = dc,
+est &lt;- create_mean(var = edad, dominios = region+sexo, disenio = dc,
                    unweighted = T, deff = T, ess = T)
 
-evaluate_size(est, scheme = "cepal", unweighted = 70, ess = 180) %&gt;% 
-  select(region, sexo, total, n, gl, coef_var, unweighted, ess, tag) %&gt;% 
+evaluate_mean(est, scheme = "cepal", unweighted = 70, ess = 180, df = 200) %&gt;% 
+  select(region, sexo, mean, n, gl, coef_var, unweighted, ess, tag) %&gt;% 
   slice(1:6)
 ```
 
 ```
-##   region sexo    total    n  gl   coef_var unweighted       ess     tag
-## 1      1    1  9248.56 1129 113 0.19398036         46  531.2480 supress
-## 2      2    1 21320.02 1342 148 0.13959832         79  790.7939 publish
-## 3      3    1 10659.94 1340 169 0.14012331         80  705.0535 publish
-## 4      4    1 22749.72 1852 240 0.17480808         80  558.0660 publish
-## 5      5    1 52432.50 4639 588 0.09123426        239 2076.7353 publish
-## 6      6    1 28877.61 2470 259 0.11694997        123 1182.1014 publish
+##   region sexo     mean    n  gl   coef_var unweighted       ess     tag
+## 1      1    1 32.38755 1129 113 0.02318804       1129  696.7784  review
+## 2      2    1 33.52494 1342 148 0.02055448       1342  828.5747  review
+## 3      3    1 34.44984 1340 169 0.02005867       1340  965.7103  review
+## 4      4    1 35.95312 1852 240 0.01959991       1852  982.9191 publish
+## 5      5    1 36.94368 4639 588 0.01208122       4639 2478.8541 publish
+## 6      6    1 36.71949 2470 259 0.01904157       2470  950.9261 publish
 ```
-
-
-
-
-
----
-
-background-image: url("imagenes/fondo2.PNG")
-background-size: contain;
-background-position: 100% 0%
-
-# Estándar CEPAL
-
-¿Y si necesito manejar los parámetros del estándar?
-
-.center[
-&lt;img src="https://media.giphy.com/media/xUPGcz2H1TXdCz4suY/giphy.gif" width="150" /&gt;
-]
-
-
---
-
-
-```r
-est &lt;- create_size(var = desocupado, dominios = region+sexo, disenio = dc,
-                   unweighted = T, deff = T, ess = T)
-
-evaluate_size(est, scheme = "cepal", unweighted = 70, ess = 180) %&gt;% 
-  select(region, sexo, total, n, gl, coef_var, unweighted, ess, tag) %&gt;% 
-  slice(1:6)
-```
-
-```
-##   region sexo    total    n  gl   coef_var unweighted       ess     tag
-## 1      1    1  9248.56 1129 113 0.19398036         46  531.2480 supress
-## 2      2    1 21320.02 1342 148 0.13959832         79  790.7939 publish
-## 3      3    1 10659.94 1340 169 0.14012331         80  705.0535 publish
-## 4      4    1 22749.72 1852 240 0.17480808         80  558.0660 publish
-## 5      5    1 52432.50 4639 588 0.09123426        239 2076.7353 publish
-## 6      6    1 28877.61 2470 259 0.11694997        123 1182.1014 publish
-```
-
-
 
 
 ---
@@ -1053,6 +1017,35 @@ background-image: url("imagenes/fondo2.PNG")
 background-size: contain;
 background-position: 100% 0%
 
+# Un poco más de práctica
+
+- Calcula el total de desocupados según tramo etario (tramo_edad), considerando la subpoblación relevante (fdt)   
+- Evalúa si el tabulado cumple con el estándar de CEPAL
+
+- Intenta cambiar algunos parámetros de calidad
+
+--
+
+
+```r
+tramo_ocup &lt;- create_size(desocupado, dominios = tramo_edad, subpop = fdt, 
+                          disenio = dc, 
+                          deff = T, 
+                          unweighted = T, 
+                          ess = T)
+
+eval_tramo &lt;- evaluate_size(tramo_ocup, scheme = "cepal")
+```
+
+
+
+
+---
+
+background-image: url("imagenes/fondo2.PNG")
+background-size: contain;
+background-position: 100% 0%
+
 # Próximos pasos
 
 Estamos reestructurando el paquete para simplificar su uso
@@ -1068,9 +1061,14 @@ Homologaremos las 4 funciones básicas entre INE y CEPAL
 
 --
 
-Crearemos una única función de evaluación 
+Crearemos una única función de evaluación, implementando OOP 
 
 - evaluate
+
+--
+
+Permitiremos diseños sin UPM y sin estratos
+
 
 --
 
@@ -1102,7 +1100,7 @@ En este [repositorio de github](https://github.com/inesscc/calidad) pueden propo
 
 --
 
-Ricardo Pizarro y yo somos los mantenedores 
+Ricardo Pizarro y Klaus Lehmann son los desarrolladores 
 
 --
 
@@ -1110,66 +1108,21 @@ Pueden generar *issues* o nuevas ramas de desarrollo
 
 --
 
-Si en tu región tienes un desarrollo o mejora, estaremos felices de revisarlo e incorporarlo al paquete  
+También pueden escribirnos a:
+
+**ifaglonij@ine.gob.cl** : Ignacio Agloni  (Jefe Proyecto Estratégico de Servicios Compartidos)
+**kilehmannm@ine.gob.cl**: Klaus Lehmann   (Jefe de proyectos de Ciencia de Datos) 
+**rapizarros@ine.gob.cl**: Ricardo Pizarro (Analista Senior Proyecto Estratégico Servicios Compartidos)
+
+--
+
+Si tienes una propuesta de desarrollo o mejora, estaremos felices de revisarlo e incorporarlo al paquete  
 
 .center[
 ### 😄😄😄😄😄
 ]
 
 
-
-
-
----
-background-image: url("imagenes/fondo2.PNG")
-background-size: contain;
-background-position: 100% 0%
-
-# Un poco de práctica
-
-- Calcula el total de desocupados según tramo etario  
-- Evalúa si el tabulado cumple con el estándar
-- Genera una visualización de la tabla evaluada
-
---
-
-
-```r
-tramo_ocup &lt;- create_tot(desocupado, dominios = tramo_edad, subpop = fdt, disenio = dc)
-eval_tramo &lt;- evaluate_tot(tramo_ocup, publicar = T)
-tabla_html(eval_tramo)
-```
-
---
-- Calcula el total de desocupados según tramo etario y sexo  
-- Evalúa si el tabulado cumple con el estándar
-- Genera una visualización de la tabla evaluada
-
-
-```r
-tramo_sexo_ocup &lt;- create_tot(desocupado, dominios = tramo_edad+sexo, subpop = fdt, disenio = dc)
-eval_tramo_sexo &lt;- evaluate_tot(tramo_sexo_ocup, publicar = T)
-tabla_html(eval_tramo_sexo)
-```
-
----
-
-background-image: url("imagenes/fondo2.PNG")
-background-size: contain;
-background-position: 100% 0%
-
-# Un poco de práctica
-
-- Calcula el total de desocupados según tramo etario y region  
-- Evalúa si el tabulado cumple con el estándar
-- Genera una visualización de la tabla evaluada
-
-
-```r
-tramo_region_ocup &lt;- create_tot(desocupado, dominios = tramo_edad+region, subpop = fdt, disenio = dc)
-eval_region_tramo &lt;- evaluate_tot(tramo_region_ocup, publicar = T)
-tabla_html(eval_region_tramo)
-```
 
 
 
@@ -1182,7 +1135,7 @@ class: center, middle
 
 &lt;img src="imagenes/logo_portada2.png" width="200" /&gt;
 
-## Capacitación en uso paquete calidad
+## Taller sobre el uso del paquete calidad
 
 ## Proyecto Estratégico Servicios Compartidos para la Producción Estadística
 
